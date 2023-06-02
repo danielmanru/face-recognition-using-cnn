@@ -41,8 +41,7 @@ def realtime_predict_image(realtime_images_pred):
     images = np.vstack([x])
     pred = loaded_model.predict(images)
     predicted = classes[np.argmax(pred)]
-    result = "Predict : " + predicted
-    return result
+    return predicted
 
 
 def main():
@@ -74,12 +73,17 @@ def main():
                 success, img = cap.read()
                 imgS = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 wajah = faceDeteksi.detectMultiScale(imgS, 1.3, 5)
+
                 for (x, y, w, h) in wajah:
                     cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+                    img_source = cv2.resize(imgS, (224, 224))
+                    face_predict = realtime_predict_image(img_source)
+                    cv2.putText(img, str(face_predict), (x, y-20),
+                                cv2.FONT_HERSHEY_DUPLEX, 1, (0, 255, 0))
 
                 FRAME_WINDOW.image(img)
-                img_source = cv2.resize(imgS, (224, 224))
-                text.write(realtime_predict_image(img_source))
+                # img_source = cv2.resize(imgS, (224, 224))
+                # text.write(realtime_predict_image(img_source))
                 cv2.waitKey(1)
         else:
             pass
